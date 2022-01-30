@@ -1,0 +1,10 @@
+---
+# defaults file for roles/php-fpm
+
+php_fpm_pools: []
+
+# Example of php_fpm_pools variable
+# php_fpm_pools:
+#   - name: mypool1
+
+php_fpm_pools_log_dir: "/var/log/php-fpm.pools"

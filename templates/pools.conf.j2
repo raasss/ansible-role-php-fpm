@@ -1,0 +1,59 @@
+{% for pool in php_fpm_pools %}
+[{{ pool.name }}]
+
+user = app-{{ pool.name }}
+group = {{ pool.name }}
+
+{% if pool.listen_port is defined %}
+listen = {{ pool.listen_address | default('0.0.0.0') }}:{{ pool.listen_port }}
+;listen.allowed_clients = 0.0.0.0
+{% else %}
+listen = /run/php/php7.4-fpm-{{ pool.domain }}.sock
+listen.backlog = 511
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0660
+{% endif %}
+
+process.priority = -19
+
+pm = ondemand
+pm.max_children = 5
+pm.process_idle_timeout = 300s;
+pm.max_requests = 500
+
+pm.status_path = /_php-fpm-status
+
+ping.path = /_php-fpm-ping
+ping.response = pong
+
+access.log = {{ php_fpm_pools_log_dir }}/{{ pool.name }}.access.log
+access.format = "%R - %u %t \"%m %r%Q%q\" %s %f %{mili}d %{kilo}M %C%%"
+slowlog = {{ php_fpm_pools_log_dir }}/{{ pool.name }}.slow.log
+
+request_slowlog_timeout = 1s
+request_slowlog_trace_depth = 20
+
+request_terminate_timeout = 600s
+
+rlimit_files = 1024
+
+;chdir = {{ pool.chdir }}
+
+catch_workers_output = yes
+decorate_workers_output = yes
+
+clear_env = yes
+security.limit_extensions = .php
+
+; enable display of errors
+php_flag[display_errors] = on
+php_flag[display_startup_errors] = on
+php_admin_value[date.timezone] = UTC
+php_admin_value[error_log] = {{ php_fpm_pools_log_dir }}/{{ pool.name }}.error.log
+php_admin_flag[log_errors] = on
+
+php_value[opcache.revalidate_freq] = 600
+php_value[realpath_cache_size] = 1MB
+php_value[opcache.max_accelerated_files] = 1048793
+{% endfor %}
