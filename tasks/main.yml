@@ -1,11 +1,4 @@
 ---
-# tasks file for roles/php-fpm
-
-# - name: Update APT cache
-#   apt:
-#     update_cache: yes
-#     cache_valid_time: 3600
-
 - name: Install packages
   apt:
     name:
@@ -28,92 +21,6 @@
     owner: root
     group: root
 
-# - name: Add system groups
-#   group:
-#     name: "{{ item.name }}_php-fpm"
-#     state: present
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Add system users
-#   user:
-#     name: "{{ item.name }}_php-fpm"
-#     state: present
-#     comment: "{{ item.domain }}"
-#     group: "{{ item.name }}_php-fpm"
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Create pools base dir
-#   file:
-#     path: "/srv/www"
-#     state: directory
-#     mode: 0755
-#     owner: root
-#     group: root
-
-# - name: Create pool home directories
-#   file:
-#     path: "/srv/www/{{ item.domain }}"
-#     state: directory
-#     mode: 0750
-#     owner: "{{ item.name }}_php-fpm"
-#     group: "{{ item.name }}_php-fpm"
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Create pool log directories
-#   file:
-#     path: "/srv/www/{{ item.domain }}/log"
-#     state: directory
-#     mode: 0750
-#     owner: "{{ item.name }}_php-fpm"
-#     group: "{{ item.name }}_php-fpm"
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Create pool working directories
-#   file:
-#     path: "/srv/www/{{ item.domain }}/htdocs"
-#     state: directory
-#     mode: 0750
-#     owner: "{{ item.name }}_php-fpm"
-#     group: "{{ item.name }}_php-fpm"
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Add index.html
-#   copy:
-#     content: |
-#       {{ item.domain }}
-#     dest: "/srv/www/{{ item.domain }}/htdocs/index.html"
-#     owner: "{{ item.name }}"
-#     group: "{{ item.name }}"
-#     mode: 0644
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Create phpinfo.php
-#   copy:
-#     src: phpinfo.php
-#     dest: "/srv/www/{{ item.domain }}/htdocs/phpinfo.php"
-#     # owner: "{{ item.name }}_php-fpm"
-#     # group: "{{ item.name }}_php-fpm"
-#     mode: 0644
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Allow access for Apache user on pool home directories
-#   acl:
-#     path: "/srv/www/{{ item.domain }}"
-#     entity: www-data
-#     etype: user
-#     permissions: rx
-#     state: present
-#   with_items: "{{ php_fpm_pools }}"
-
-# - name: Allow access for Apache user on pool working directories
-#   acl:
-#     path: "/srv/www/{{ item.domain }}/htdocs"
-#     entity: www-data
-#     etype: user
-#     permissions: rx
-#     state: present
-#   with_items: "{{ php_fpm_pools }}"
-
 - name: Create common pool log directory
   file:
     path: "{{ php_fpm_pools_log_dir }}"
@@ -130,7 +37,6 @@
     group: root
     mode: 0644
   when: php_fpm_pools[0] is defined
-  # when: php_fpm_pools is defined
   notify:
     - restart php-fpm service
 

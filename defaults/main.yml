@@ -1,6 +1,4 @@
 ---
-# defaults file for roles/php-fpm
-
 php_fpm_pools: []
 
 # Example of php_fpm_pools variable
